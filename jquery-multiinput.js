@@ -37,9 +37,6 @@
 			var match;
 			var multiType = "multi" + type;
 			var target = $(self);
-			if(dele!==null){
-				target = target.find(dele);
-			}
 			return function(eve){
 				eve.multiType = multiType;
 				
@@ -64,7 +61,7 @@
 				}
 				
 				//delegateって結構闇なことしてるのね、って感じだ
-				return target.has(eve.target).trigger(multiType,[eve]);
+				return target.find(eve.target).trigger(multiType,[eve]);
 			};
 		};
 		
