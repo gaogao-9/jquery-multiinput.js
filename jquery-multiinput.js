@@ -14,7 +14,6 @@
 //	numが1のときはtargetTouches依存
 //	numが2のときはtouches依存となっています。
 //});
-//});
 
 !function($){
 	var eventsCnt = 0;
