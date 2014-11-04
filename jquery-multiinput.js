@@ -56,7 +56,7 @@
 					device = match[0];
 				}
 				
-				$(self).triggerHandler(multiType,[eve]);
+				return $(self).triggerHandler(multiType,[eve]);
 			};
 		};
 		
