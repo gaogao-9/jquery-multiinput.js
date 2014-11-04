@@ -14,6 +14,7 @@
 //	numが1のときはtargetTouches依存
 //	numが2のときはtouches依存となっています。
 //});
+//});
 
 !function($){
 	var eventsCnt = 0;
@@ -33,7 +34,7 @@
 	
 	//multiイベントの種類に応じたpointer/mouse/touchイベントを追加する関数
 	var AddMultiEvent = function(self,type,dele,callback){
-		var MultiEvent = function(self,type,cnt){
+		var MultiEvent = function(self,type,dele){
 			var match;
 			var multiType = "multi" + type;
 			return function(eve){
@@ -55,12 +56,16 @@
 					}
 					device = match[0];
 				}
+				if(dele===null){
+					return $(self).triggerHandler(multiType,[eve]);
+				}
 				
-				return $(self).triggerHandler(multiType,[eve]);
+				//delegateって結構闇なことしてるのね、って感じだ
+				return $(self).find(dele).has(eve.target).trigger(multiType,[eve]);
 			};
 		};
 		
-		var multiEvent = MultiEvent(self,type,eventsCnt);
+		var multiEvent = MultiEvent(self,type,dele);
 		multiEvents[eventsCnt]    = multiEvent;
 		callbackEvents[eventsCnt] = callback;
 		if(dele===null){
@@ -81,6 +86,7 @@
 			case "multiend":
 			case "multienter":
 			case "multileave":
+				if(typeof b==="undefined") break;
 				var id,_dele,_callback,_wrap;
 				var match = types.filter(function(ele){
 					return ~a.indexOf(ele);
