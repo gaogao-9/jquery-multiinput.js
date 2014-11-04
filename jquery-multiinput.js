@@ -36,6 +36,10 @@
 		var MultiEvent = function(self,type,dele){
 			var match;
 			var multiType = "multi" + type;
+			var target = $(self);
+			if(dele!==null){
+				target = target.find(dele);
+			}
 			return function(eve){
 				eve.multiType = multiType;
 				
@@ -56,11 +60,11 @@
 					device = match[0];
 				}
 				if(dele===null){
-					return $(self).triggerHandler(multiType,[eve]);
+					return target.triggerHandler(multiType,[eve]);
 				}
 				
 				//delegateって結構闇なことしてるのね、って感じだ
-				return $(self).find(dele).has(eve.target).trigger(multiType,[eve]);
+				return target.has(eve.target).trigger(multiType,[eve]);
 			};
 		};
 		
