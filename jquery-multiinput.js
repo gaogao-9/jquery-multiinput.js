@@ -15,7 +15,7 @@
 //	numが2のときはtouches依存となっています。
 //});
 
-!function($){
+(function($){
 	var eventsCnt = 0;
 	var callbackEvents = [];
 	var wrapEvents   = [];
@@ -33,7 +33,7 @@
 	
 	//multiイベントの種類に応じたpointer/mouse/touchイベントを追加する関数
 	var AddMultiEvent = function(self,type,dele,callback){
-		var MultiEvent = function(self,type,dele){
+		var MultiEvent = function(self,type,dele,eventsCnt){
 			var match;
 			var multiType = "multi" + type;
 			var target = $(self);
@@ -44,8 +44,12 @@
 					return ~eve.type.indexOf(ele);
 				});
 				if(device!==match[0]){
-					if(device==="touch"){
-						//touch中に他のデバイスが発動したら無視する
+					if(((device==="touch")||(device==="pointer"))&&(match[0]==="mouse")){
+						//mouse以外からmouseへの下方動作は認めない
+						return;
+					}
+					if((device==="pointer")&&(match[0]==="touch")){
+						//pointerからtouchへの下方動作は認めない
 						return;
 					}
 					if(device!==null){
@@ -57,15 +61,15 @@
 					device = match[0];
 				}
 				if(dele===null){
-					return target.triggerHandler(multiType,[eve]);
+					eve.multiType = multiType;
+					return target.triggerHandler(multiType,[eve,eventsCnt]);
 				}
-				
 				//delegateって結構闇なことしてるのね、って感じだ
-				return target.find(eve.target).trigger(multiType,[eve]);
+				return target.find(eve.target).trigger(multiType,[eve,eventsCnt]);
 			};
 		};
 		
-		var multiEvent = MultiEvent(self,type,dele);
+		var multiEvent = MultiEvent(self,type,dele,eventsCnt);
 		multiEvents[eventsCnt]    = multiEvent;
 		callbackEvents[eventsCnt] = callback;
 		if(dele===null){
@@ -91,7 +95,8 @@
 				var match = types.filter(function(ele){
 					return ~a.indexOf(ele);
 				});
-				_wrap = function(hnd,eve){
+				_wrap = function(hnd,eve,eventsCnt){
+					if(_callback!==callbackEvents[eventsCnt]) return;
 					eve.multiType = hnd.type;
 					return _callback.apply(this,[eve]);
 				};
@@ -169,7 +174,11 @@
 			case "mouseup":
 			case "mouseenter":
 			case "mouseleave":
-			default: //pointerイベントが実装され始めたらちゃんと書く
+			case "pointerdown":
+			case "pointermove":
+			case "pointerup":
+			case "pointerenter":
+			case "pointerleave":
 				output.screenX = eve.screenX;
 				output.screenY = eve.screenY;
 				output.clientX = eve.clientX;
@@ -192,8 +201,11 @@
 				output.pageX   = cTouches[0].pageX;
 				output.pageY   = cTouches[0].pageY;
 				break;
+			default: //不明なイベント
+				throw new Error("$.fn.getMultiXY : 謎のイベント" + eve.type + "を受けました。");
+				break;
 		}
 		
 		return output;
 	};
-}(jQuery);
+})(jQuery);
