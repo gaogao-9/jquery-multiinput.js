@@ -61,7 +61,6 @@
 					device = match[0];
 				}
 				if(dele===null){
-					eve.multiType = multiType;
 					return target.triggerHandler(multiType,[eve,eventsCnt]);
 				}
 				//delegateって結構闇なことしてるのね、って感じだ
