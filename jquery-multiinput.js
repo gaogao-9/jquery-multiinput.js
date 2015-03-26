@@ -98,7 +98,7 @@
 					if(_callback!==callbackEvents[eventsCnt]) return;
 					eve.multiType = hnd.type;
 					var ctouches = eve.originalEvent.changedTouches;
-					eve.isMultiTouch = (ctouches && ctouches.length>1);
+					eve.isMultiTouch = (!!ctouches) && (ctouches.length>1);
 					return _callback.apply(this,[eve]);
 				};
 				if(typeof b==="function"){
