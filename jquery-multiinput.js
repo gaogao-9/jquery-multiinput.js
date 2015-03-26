@@ -98,8 +98,15 @@
 				_wrap = function(hnd,eve,eventsCnt){
 					if(_callback!==callbackEvents[eventsCnt]) return;
 					eve.multiType = hnd.type;
-					var ctouches = eve.originalEvent.changedTouches;
-					eve.isMultiTouch = (!!ctouches) && (ctouches.length>1);
+					switch(eve.type){
+						case "touchstart":
+						case "touchmove":
+						case "touchend":
+						case "touchenter":
+						case "touchleave":
+							eve.isMultiTouch = (eve.originalEvent.touches.length>1);
+							break;
+					}
 					return _callback.apply(this,[eve]);
 				};
 				if(typeof b==="function"){
