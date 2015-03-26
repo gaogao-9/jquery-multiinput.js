@@ -8,6 +8,7 @@ mouse/touchイベント間の闇を吸収して、いずれかのイベントが
 $(document).on("multistart",function(eve){
 	console.log(eve.type);      // 押したデバイスに依存[mousedown/touchstart/pointerdown]いずれか
 	console.log(eve.multiType); // "multistart"と表示
+	console.log(eve.isMultiTouch); // (touch系イベント時 && 2本以上の指で操作してる)時にtrue、それ以外の時にfalse
 	
 	var pos = $.fn.getMultiXY(eve); // この関数もこのライブラリに入ってます。
 	console.log("page  (" + pos.pageX   + "," + pos.pageY   + ")"); // "page(x,y)"と表示
